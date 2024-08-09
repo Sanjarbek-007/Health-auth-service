@@ -1,0 +1,266 @@
+basePath: /auth
+definitions:
+  models.ChangePasswordReq:
+    properties:
+      current_password:
+        type: string
+      email:
+        type: string
+      new_password:
+        type: string
+    type: object
+  models.ForgotPasswordReq:
+    properties:
+      email:
+        type: string
+    type: object
+  models.LoginReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.RefreshToken:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  models.RegisterReq:
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      native_language:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  models.RegisterResp:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      native_language:
+        type: string
+      username:
+        type: string
+    type: object
+  models.ResetPasswordReq:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+      new_password:
+        type: string
+    type: object
+  models.Tokens:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        description: expiry date of access token
+        type: string
+      refresh_token:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: Authorazation API
+  title: Authorazation
+  version: "1.0"
+paths:
+  /change-password:
+    post:
+      description: Changes user password
+      parameters:
+      - description: Change password data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.ChangePasswordReq'
+      responses:
+        "200":
+          description: Password changed successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid data
+          schema:
+            type: string
+        "500":
+          description: Server error while processing request
+          schema:
+            type: string
+      summary: Changes password
+      tags:
+      - auth
+  /forgot-password:
+    post:
+      description: Sends password reset code to user's email
+      parameters:
+      - description: User email
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.ForgotPasswordReq'
+      responses:
+        "200":
+          description: Password reset code sent successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid data
+          schema:
+            type: string
+        "500":
+          description: Server error while processing request
+          schema:
+            type: string
+      summary: Forgot password
+      tags:
+      - auth
+  /login:
+    post:
+      description: Logs user in
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Tokens'
+        "400":
+          description: Invalid data
+          schema:
+            type: string
+        "500":
+          description: Server error while processing request
+          schema:
+            type: string
+      summary: Login user
+      tags:
+      - auth
+  /logout:
+    post:
+      description: Logouts user
+      parameters:
+      - description: User email
+        in: query
+        name: email
+        required: true
+        type: string
+      responses:
+        "200":
+          description: User logged out successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid user id
+          schema:
+            type: string
+        "500":
+          description: Server error while processing request
+          schema:
+            type: string
+      summary: Logouts user
+      tags:
+      - auth
+  /refresh:
+    post:
+      description: Refreshes refresh token
+      parameters:
+      - description: Refresh token
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.RefreshToken'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Tokens'
+        "400":
+          description: Invalid data
+          schema:
+            type: string
+        "500":
+          description: Server error while processing request
+          schema:
+            type: string
+      summary: Refreshes token
+      tags:
+      - auth
+  /register:
+    post:
+      description: Registers a new user
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.RegisterResp'
+        "400":
+          description: Invalid data
+          schema:
+            type: string
+        "500":
+          description: Server error while processing request
+          schema:
+            type: string
+      summary: Registers user
+      tags:
+      - auth
+  /reset-password:
+    post:
+      description: Resets user password
+      parameters:
+      - description: Reset password data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.ResetPasswordReq'
+      responses:
+        "200":
+          description: Password reset successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid data
+          schema:
+            type: string
+        "500":
+          description: Server error while processing request
+          schema:
+            type: string
+      summary: Reset password
+      tags:
+      - auth
+swagger: "2.0"

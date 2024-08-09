@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  postgres-db:  
+    image: postgres
+    container_name: postgresdb
+    environment:
+      - POSTGRES_USER=macbookpro
+      - POSTGRES_PASSWORD=1111
+      - POSTGRES_DB=auth
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5438:5432"
+    networks:
+      - auth-ntwk 
+
+  
+  migrate:
+    image: migrate/migrate
+    networks:
+      - auth-ntwk 
+    depends_on:
+      - postgres-db
+    volumes:
+      - ./migrations:/migrations
+    command: ["-path", "/migrations", "-database", "postgres://macbookpro:1111@postgres-db:5432/auth?sslmode=disable", "up"]
+
+
+  redis:
+    image: redis:latest
+    container_name: l-redis
+    networks:
+      - auth-ntwk
+    ports:
+      - "9378:6379"
+  
+  l-auth:
+    container_name: l-auth-service
+    build: .
+    depends_on:
+      - postgres-db
+      - redis
+    ports:
+      - "8081:8080"
+    networks:
+      - auth-ntwk
+
+volumes:
+  postgres-data:
+
+networks:
+  auth-ntwk:
+    name: auth-ntwk 
+    external: true
