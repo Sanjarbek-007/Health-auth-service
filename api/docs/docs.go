@@ -339,22 +339,22 @@ const docTemplate = `{
         "models.RegisterReq": {
             "type": "object",
             "properties": {
+                "date_of_birth": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
-                "full_name": {
+                "first_name": {
                     "type": "string"
                 },
-                "native_language": {
+                "gender": {
+                    "type": "string"
+                },
+                "last_name": {
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                },
-                "role": {
-                    "type": "string"
-                },
-                "username": {
                     "type": "string"
                 }
             }
@@ -365,19 +365,22 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "date_of_birth": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
-                "full_name": {
+                "first_name": {
+                    "type": "string"
+                },
+                "gender": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "native_language": {
-                    "type": "string"
-                },
-                "username": {
+                "last_name": {
                     "type": "string"
                 }
             }

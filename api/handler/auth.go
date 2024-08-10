@@ -138,13 +138,13 @@ func (h *Handler) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	u, err := h.Storage.User().GetUserProfile(ctx, &pb.GetProfileReq{Id: id})
+	u, err := h.Storage.User().GetUserProfile(ctx, &pb.GetProfileReq{UserId: id})
 	if err != nil {
 		handlerError(c, h, err, "error fetching user", http.StatusInternalServerError)
 		return
 	}
 
-	accessToken, err := tokens.GenerateAccessToken(u.Id, u.Role)
+	accessToken, err := tokens.GenerateAccessToken(u.UserId, u.Role)
 	if err != nil {
 		handlerError(c, h, err, "error generating access token", http.StatusInternalServerError)
 		return

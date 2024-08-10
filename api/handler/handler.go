@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"auth-service/pkg/logger"
+	"auth-service/logs"
 	"auth-service/storage"
 	"log/slog"
 
@@ -17,7 +17,7 @@ type Handler struct {
 func NewHandler(s storage.IStorage) *Handler {
 	return &Handler{
 		Storage: s,
-		Log:     logger.NewLogger(),
+		Log:     logs.NewLogger(),
 	}
 }
 

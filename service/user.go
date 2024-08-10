@@ -2,7 +2,7 @@ package service
 
 import (
 	pb "auth-service/genproto/user"
-	"auth-service/pkg/logger"
+	"auth-service/logs"
 	"auth-service/storage"
 	"log/slog"
 )
@@ -16,6 +16,6 @@ type UserService struct {
 func NewUserService(s storage.IStorage) *UserService {
 	return &UserService{
 		storage: s,
-		logger:  logger.NewLogger(),
+		logger:  logs.NewLogger(),
 	}
 }

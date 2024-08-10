@@ -20,6 +20,8 @@ WORKDIR /app
 COPY --from=builder /app/myapp .
 COPY --from=builder /app/.env .
 
+COPY --from=builder /app/api/email/template.html ./api/email/
+
 EXPOSE 8080
 
 # Command to run the executable

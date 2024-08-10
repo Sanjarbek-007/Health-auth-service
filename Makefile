@@ -1,5 +1,5 @@
 CURRENT_DIR=$(shell pwd)
-DBURL := postgres://postgres:03212164@localhost:5432/auth_commers_service?sslmode=disable
+DBURL := postgres://macbookpro:1111@localhost:5432/auth?sslmode=disable
 
 proto-gen:
 	./scripts/gen-proto.sh ${CURRENT_DIR}

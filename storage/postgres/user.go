@@ -2,8 +2,8 @@ package postgres
 
 import (
 	pb "auth-service/genproto/user"
+	"auth-service/logs"
 	"auth-service/models"
-	"auth-service/pkg/logger"
 	"auth-service/storage"
 	"context"
 	"database/sql"
@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"log/slog"
 	"time"
+
 )
 
 type UserRepo struct {
@@ -19,7 +20,7 @@ type UserRepo struct {
 }
 
 func NewUserRepo(DB *sql.DB) storage.IUserStorage {
-	return &UserRepo{DB: DB, Log: logger.NewLogger()}
+	return &UserRepo{DB: DB, Log: logs.NewLogger()}
 }
 
 func (u *UserRepo) CreateUser(ctx context.Context, req *models.RegisterReq) (*models.RegisterResp, error) {
@@ -29,9 +30,9 @@ func (u *UserRepo) CreateUser(ctx context.Context, req *models.RegisterReq) (*mo
 	}
 
 	var userID, createdAtStr string
-	userQuery := `INSERT INTO users (username, email, password_hash, full_name, native_language, role) 
+	userQuery := `INSERT INTO users (first_name, last_name, email, password_hash, date_of_birth, gender) 
                   VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, created_at`
-	err = tx.QueryRowContext(ctx, userQuery, req.Username, req.Email, req.Password, req.Fullname, req.NativeLanguage, req.Role).Scan(&userID, &createdAtStr)
+	err = tx.QueryRowContext(ctx, userQuery, req.FirstName, req.LastName, req.Email, req.Password, req.DateOfBirth, req.Gender).Scan(&userID, &createdAtStr)
 	if err != nil {
 		tx.Rollback()
 		return nil, fmt.Errorf("failed to insert user: %w", err)
@@ -48,21 +49,22 @@ func (u *UserRepo) CreateUser(ctx context.Context, req *models.RegisterReq) (*mo
 	}
 
 	return &models.RegisterResp{
-		Id:             userID,
-		Username:       req.Username,
-		Email:          req.Email,
-		Fullname:       req.Fullname,
-		NativeLanguage: req.NativeLanguage,
-		CreatedAt:      createdAt.String(),
+		Id:          userID,
+		Email:       req.Email,
+		FirstName:   req.FirstName,
+		LastName:    req.LastName,
+		DateOfBirth: req.DateOfBirth,
+		Gender:      req.Gender,
+		CreatedAt:   createdAt.String(),
 	}, nil
 }
 
 func (u *UserRepo) GetUserDetails(ctx context.Context, email string) (*models.UserDetails, error) {
-	query := `SELECT id, username, password_hash, role FROM users WHERE email = $1`
+	query := `SELECT id, password_hash, role FROM users WHERE email = $1 AND deleted_at = 0`
 
-	var id, username, passwordHash, role string
+	var id, passwordHash, role string
 
-	err := u.DB.QueryRowContext(ctx, query, email).Scan(&id, &username, &passwordHash, &role)
+	err := u.DB.QueryRowContext(ctx, query, email).Scan(&id, &passwordHash, &role)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")
@@ -72,7 +74,7 @@ func (u *UserRepo) GetUserDetails(ctx context.Context, email string) (*models.Us
 
 	return &models.UserDetails{
 		Id:       id,
-		Username: username,
+		Email:    email,
 		Password: passwordHash,
 		Role:     role,
 	}, nil
@@ -80,10 +82,10 @@ func (u *UserRepo) GetUserDetails(ctx context.Context, email string) (*models.Us
 }
 
 func (u *UserRepo) GetUserProfile(ctx context.Context, req *pb.GetProfileReq) (*pb.GetProfileRes, error) {
-	query := `SELECT id, username, email, full_name, native_language, role FROM users WHERE id = $1`
-	var id, username, email, fullName, nativeLanguage, role string
+	query := `SELECT id, first_name, last_name, email, gender, role, date_of_birth FROM users WHERE id = $1 AND deleted_at = 0`
+	var id, firstName, lastName, email, gender, role, dateOfBirth string
 
-	err := u.DB.QueryRowContext(ctx, query, req.Id).Scan(&id, &username, &email, &fullName, &nativeLanguage, &role)
+	err := u.DB.QueryRowContext(ctx, query, req.UserId).Scan(&id, &firstName, &lastName, &email, &gender, &role, &dateOfBirth)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")
@@ -92,18 +94,42 @@ func (u *UserRepo) GetUserProfile(ctx context.Context, req *pb.GetProfileReq) (*
 	}
 
 	return &pb.GetProfileRes{
-		Id:             id,
-		Username:       username,
-		Email:          email,
-		Fullname:       fullName,
-		NativeLanguage: nativeLanguage,
-		Role:           role,
+		UserId:      id,
+		Email:       email,
+		FirstName:   firstName,
+		LastName:    lastName,
+		Gender:      gender,
+		Role:        role,
+		DateOfBirth: dateOfBirth,
 	}, nil
 }
 
 func (u *UserRepo) UpdateProfile(ctx context.Context, req *pb.UpdateProfileReq) (*pb.Void, error) {
-	query := `UPDATE users SET full_name = $1, native_language = $2 WHERE id = $3`
-	_, err := u.DB.ExecContext(ctx, query, req.Fullname, req.NativeLanguage, req.Id)
+	var email, firstName, lastName, dateOfBirth, gender string
+	get := `SELECT email, first_name, last_name, date_of_birth, gender FROM users WHERE id = $1 AND deleted_at = 0`
+	err := u.DB.QueryRowContext(ctx, get, req.Id).Scan(&email, &firstName, &lastName, &dateOfBirth, &gender)
+	if err!= nil {
+        return nil, errors.New("user not found")
+    }
+
+	if req.Email!= "" {
+		req.Email = email
+	}
+	if req.FirstName!= "" {
+        req.FirstName = firstName
+    }
+	if req.LastName!= "" {
+        req.LastName = lastName
+    }
+	if req.DateOfBirth!= "" {
+        req.DateOfBirth = dateOfBirth
+    }
+	if req.Gender!= "" {
+        req.Gender = gender
+    }
+
+	query := `UPDATE users SET email = $1, first_name = $2, last_name = $3, date_of_birth = $4, gender = $5 WHERE id = $6 AND deleted_at=0`
+	_, err = u.DB.ExecContext(ctx, query, req.Email, req.FirstName, req.LastName, req.DateOfBirth, req.Gender, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -132,10 +158,10 @@ func (u *UserRepo) UpdatePassword(ctx context.Context, req *pb.UpdatePasswordReq
 }
 
 func (u *UserRepo) GetUSerByEmail(ctx context.Context, req *pb.GetUSerByEmailReq) (*pb.FilterUsers, error) {
-	query := `SELECT id, username, email, full_name, native_language, role FROM users WHERE email=$1`
-	var id, username, email, fullName, nativeLanguage, role string
+	query := `SELECT id, first_name, last_name, email, date_of_birth, role, gender FROM users WHERE email=$1 AND deleted_at = 0`
+	var id, firstName, lastName, email, dateOfBirth, role, gender string
 
-	err := u.DB.QueryRowContext(ctx, query, req.Email).Scan(&id, &username, &email, &fullName, &nativeLanguage, &role)
+	err := u.DB.QueryRowContext(ctx, query, req.Email).Scan(&id, &firstName, &lastName, &email, &dateOfBirth, &role, &gender)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")
@@ -144,12 +170,13 @@ func (u *UserRepo) GetUSerByEmail(ctx context.Context, req *pb.GetUSerByEmailReq
 	}
 
 	return &pb.FilterUsers{
-		Id:             id,
-		Username:       username,
+		UserId:             id,
 		Email:          email,
-		Fullname:       fullName,
-		NativeLanguage: nativeLanguage,
-		Role:           role,
+		FirstName:    firstName,
+        LastName:     lastName,
+        DateOfBirth: dateOfBirth,
+        Gender:         gender,
+        Role:           role,
 	}, nil
 }
 

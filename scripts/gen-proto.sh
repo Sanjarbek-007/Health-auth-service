@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 CURRENT_DIR=$1
 rm -rf ${CURRENT_DIR}/genproto
 for x in $(find ${CURRENT_DIR}/protos/* -type d); do

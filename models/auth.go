@@ -1,20 +1,21 @@
 package models
 
 type RegisterReq struct {
-	Username       string `json:"username"`
-	Email          string `json:"email"`
-	Password       string `json:"password"`
-	Fullname       string `json:"full_name"`
-	NativeLanguage string `json:"native_language"`
-	Role           string `json:"role"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	DateOfBirth string `json:"date_of_birth"`
+	Gender      string `json:"gender"`
 }
 
 type RegisterResp struct {
 	Id             string `json:"id"`
-	Username       string `json:"username"`
 	Email          string `json:"email"`
-	Fullname       string `json:"full_name"`
-	NativeLanguage string `json:"native_language"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	DateOfBirth string `json:"date_of_birth"`
+	Gender      string `json:"gender"`
 	CreatedAt      string `json:"created_at"`
 }
 
@@ -51,7 +52,7 @@ type ResetPasswordReq struct {
 
 type UserDetails struct {
 	Id       string `json:"id"`
-	Username string `json:"username"`
+	Email string `json:"email"`
 	Password string `json:"password"`
 	Role     string `json:"role"`
 }
