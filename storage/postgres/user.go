@@ -210,3 +210,14 @@ func (u *UserRepo) GetByUserID(ctx context.Context, userID string) (*pb.User, er
 		Gender:      gender,
 	}, err
 }
+
+func (u *UserRepo) DeleteUser(ctx context.Context, userID string) error {
+	now := time.Now().Unix()
+	query := `UPDATE users SET deleted_at = $1 WHERE id = $2 AND deleted_at = 0`
+    _, err := u.DB.ExecContext(ctx, query, now, userID)
+    if err!= nil {
+        return err
+    }
+
+    return nil
+}
