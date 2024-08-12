@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"log/slog"
 	"time"
-
 )
 
 type UserRepo struct {
@@ -108,25 +107,25 @@ func (u *UserRepo) UpdateProfile(ctx context.Context, req *pb.UpdateProfileReq) 
 	var email, firstName, lastName, dateOfBirth, gender string
 	get := `SELECT email, first_name, last_name, date_of_birth, gender FROM users WHERE id = $1 AND deleted_at = 0`
 	err := u.DB.QueryRowContext(ctx, get, req.Id).Scan(&email, &firstName, &lastName, &dateOfBirth, &gender)
-	if err!= nil {
-        return nil, errors.New("user not found")
-    }
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
 
-	if req.Email!= "" {
+	if req.Email != "" {
 		req.Email = email
 	}
-	if req.FirstName!= "" {
-        req.FirstName = firstName
-    }
-	if req.LastName!= "" {
-        req.LastName = lastName
-    }
-	if req.DateOfBirth!= "" {
-        req.DateOfBirth = dateOfBirth
-    }
-	if req.Gender!= "" {
-        req.Gender = gender
-    }
+	if req.FirstName != "" {
+		req.FirstName = firstName
+	}
+	if req.LastName != "" {
+		req.LastName = lastName
+	}
+	if req.DateOfBirth != "" {
+		req.DateOfBirth = dateOfBirth
+	}
+	if req.Gender != "" {
+		req.Gender = gender
+	}
 
 	query := `UPDATE users SET email = $1, first_name = $2, last_name = $3, date_of_birth = $4, gender = $5 WHERE id = $6 AND deleted_at=0`
 	_, err = u.DB.ExecContext(ctx, query, req.Email, req.FirstName, req.LastName, req.DateOfBirth, req.Gender, req.Id)
@@ -170,13 +169,13 @@ func (u *UserRepo) GetUSerByEmail(ctx context.Context, req *pb.GetUSerByEmailReq
 	}
 
 	return &pb.FilterUsers{
-		UserId:             id,
-		Email:          email,
-		FirstName:    firstName,
-        LastName:     lastName,
-        DateOfBirth: dateOfBirth,
-        Gender:         gender,
-        Role:           role,
+		UserId:      id,
+		Email:       email,
+		FirstName:   firstName,
+		LastName:    lastName,
+		DateOfBirth: dateOfBirth,
+		Gender:      gender,
+		Role:        role,
 	}, nil
 }
 
@@ -188,4 +187,26 @@ func (u *UserRepo) ChangePassword(ctx context.Context, userID, hashedPassword st
 	}
 
 	return nil
+}
+
+func (u *UserRepo) GetByUserID(ctx context.Context, userID string) (*pb.User, error) {
+	query := `SELECT id, first_name, last_name, email, password_hash, role, date_of_birth, gender FROM users WHERE id=$1 AND deleted_at = 0`
+	var id, firstName, lastName, email, passwordHash, role, dateOfBirth, gender string
+
+	err := u.DB.QueryRowContext(ctx, query, userID).Scan(&id, &firstName, &lastName, &email, &passwordHash, &role, &dateOfBirth, &gender)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+
+	return &pb.User{
+		UserId:      id,
+		Email:       email,
+		FirstName:   firstName,
+		LastName:    lastName,
+		DateOfBirth: dateOfBirth,
+		Gender:      gender,
+	}, err
 }

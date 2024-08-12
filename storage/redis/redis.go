@@ -3,6 +3,7 @@ package redis
 import (
 	"auth-service/config"
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/pkg/errors"
@@ -22,11 +23,13 @@ func ConnectDB() *redis.Client {
 }
 
 func StoreCode(ctx context.Context, email, code string) error {
+	fmt.Println("Storing code for email: " + email + " with code: " + code)
 	rdb := ConnectDB()
 
 	err := rdb.Set(ctx, "lingualeap:"+email, code, time.Minute*3).Err()
 	if err != nil {
 		return errors.Wrap(err, "failed to store code in redis")
+
 	}
 
 	return nil

@@ -16,7 +16,7 @@ type postgresStorage struct {
 
 func ConnectDB() (storage.IStorage, error) {
 	conf := config.Load()
-	conDb := fmt.Sprintf("host=postgresdb port=%s user=%s dbname=%s password=%s sslmode=disable",
+	conDb := fmt.Sprintf("host=localhost port=%s user=%s dbname=%s password=%s sslmode=disable",
 		conf.Postgres.DB_PORT, conf.Postgres.DB_USER, conf.Postgres.DB_NAME, conf.Postgres.DB_PASSWORD)
 	log.Printf("connecting to postgres: %s\n", conDb)
 	db, err := sql.Open("postgres", conDb)

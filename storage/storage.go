@@ -19,4 +19,5 @@ type IUserStorage interface {
 	UpdatePassword(context.Context, *pb.UpdatePasswordReq) error
 	GetUSerByEmail(context.Context, *pb.GetUSerByEmailReq) (*pb.FilterUsers, error)
 	ChangePassword(ctx context.Context, userID, hashedPassword string) error
+	GetByUserID(ctx context.Context, userID string) (*pb.User, error)
 }
