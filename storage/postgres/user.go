@@ -184,17 +184,19 @@ func (u *UserRepo) ChangePassword(ctx context.Context, userID, hashedPassword st
 }
 
 func (u *UserRepo) GetByUserID(ctx context.Context, userID string) (*pb.User, error) {
+	fmt.Println(userID, "/////////////////")
 	query := `SELECT id, first_name, last_name, email, password_hash, role, date_of_birth, gender FROM users WHERE id=$1 AND deleted_at = 0`
 	var id, firstName, lastName, email, passwordHash, role, dateOfBirth, gender string
 
 	err := u.DB.QueryRowContext(ctx, query, userID).Scan(&id, &firstName, &lastName, &email, &passwordHash, &role, &dateOfBirth, &gender)
 	if err != nil {
+		fmt.Println(1)
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")
 		}
 		return nil, err
 	}
-
+	fmt.Println(firstName)
 	return &pb.User{
 		UserId:      id,
 		Email:       email,

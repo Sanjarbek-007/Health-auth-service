@@ -23,6 +23,7 @@ func NewUserService(s storage.IStorage) *UserService {
 }
 
 func (s *UserService) GetUserById(ctx context.Context, req *pb.UserId) (*pb.User, error) {
+	fmt.Println(req, "===============================")
 	resp, err := s.storage.User().GetByUserID(ctx, req.UserId)
 	if err != nil {
 		s.logger.Error(fmt.Sprintf("Error retrieving id information: %v", err))
