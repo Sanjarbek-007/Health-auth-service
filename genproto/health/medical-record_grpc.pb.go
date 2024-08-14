@@ -4,7 +4,7 @@
 // - protoc             v5.27.1
 // source: medical-record.proto
 
-package madical_record
+package health
 
 import (
 	context "context"
@@ -19,18 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	MedicalRecord_CreateMedicalReport_FullMethodName  = "/health.MedicalRecord/CreateMedicalReport"
-	MedicalRecord_GetMedicalReport_FullMethodName     = "/health.MedicalRecord/GetMedicalReport"
-	MedicalRecord_GetMedicalReportById_FullMethodName = "/health.MedicalRecord/GetMedicalReportById"
-	MedicalRecord_UpdateMedicalReport_FullMethodName  = "/health.MedicalRecord/UpdateMedicalReport"
-	MedicalRecord_DeleteMedicalReport_FullMethodName  = "/health.MedicalRecord/DeleteMedicalReport"
+	MedicalRecord_AddMedicalReport_FullMethodName     = "/medical.MedicalRecord/AddMedicalReport"
+	MedicalRecord_GetMedicalReport_FullMethodName     = "/medical.MedicalRecord/GetMedicalReport"
+	MedicalRecord_GetMedicalReportById_FullMethodName = "/medical.MedicalRecord/GetMedicalReportById"
+	MedicalRecord_UpdateMedicalReport_FullMethodName  = "/medical.MedicalRecord/UpdateMedicalReport"
+	MedicalRecord_DeleteMedicalReport_FullMethodName  = "/medical.MedicalRecord/DeleteMedicalReport"
 )
 
 // MedicalRecordClient is the client API for MedicalRecord service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MedicalRecordClient interface {
-	CreateMedicalReport(ctx context.Context, in *CreateMedicalReportReq, opts ...grpc.CallOption) (*CreateMedicalReportRes, error)
+	AddMedicalReport(ctx context.Context, in *AddMedicalReportReq, opts ...grpc.CallOption) (*AddMedicalReportRes, error)
 	GetMedicalReport(ctx context.Context, in *GetMedicalReportReq, opts ...grpc.CallOption) (*GetMedicalReportRes, error)
 	GetMedicalReportById(ctx context.Context, in *GetMedicalReportByIdReq, opts ...grpc.CallOption) (*GetMedicalReportByIdRes, error)
 	UpdateMedicalReport(ctx context.Context, in *UpdateMedicalReportReq, opts ...grpc.CallOption) (*UpdateMedicalReportRes, error)
@@ -45,10 +45,10 @@ func NewMedicalRecordClient(cc grpc.ClientConnInterface) MedicalRecordClient {
 	return &medicalRecordClient{cc}
 }
 
-func (c *medicalRecordClient) CreateMedicalReport(ctx context.Context, in *CreateMedicalReportReq, opts ...grpc.CallOption) (*CreateMedicalReportRes, error) {
+func (c *medicalRecordClient) AddMedicalReport(ctx context.Context, in *AddMedicalReportReq, opts ...grpc.CallOption) (*AddMedicalReportRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateMedicalReportRes)
-	err := c.cc.Invoke(ctx, MedicalRecord_CreateMedicalReport_FullMethodName, in, out, cOpts...)
+	out := new(AddMedicalReportRes)
+	err := c.cc.Invoke(ctx, MedicalRecord_AddMedicalReport_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +99,7 @@ func (c *medicalRecordClient) DeleteMedicalReport(ctx context.Context, in *Delet
 // All implementations must embed UnimplementedMedicalRecordServer
 // for forward compatibility
 type MedicalRecordServer interface {
-	CreateMedicalReport(context.Context, *CreateMedicalReportReq) (*CreateMedicalReportRes, error)
+	AddMedicalReport(context.Context, *AddMedicalReportReq) (*AddMedicalReportRes, error)
 	GetMedicalReport(context.Context, *GetMedicalReportReq) (*GetMedicalReportRes, error)
 	GetMedicalReportById(context.Context, *GetMedicalReportByIdReq) (*GetMedicalReportByIdRes, error)
 	UpdateMedicalReport(context.Context, *UpdateMedicalReportReq) (*UpdateMedicalReportRes, error)
@@ -111,8 +111,8 @@ type MedicalRecordServer interface {
 type UnimplementedMedicalRecordServer struct {
 }
 
-func (UnimplementedMedicalRecordServer) CreateMedicalReport(context.Context, *CreateMedicalReportReq) (*CreateMedicalReportRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateMedicalReport not implemented")
+func (UnimplementedMedicalRecordServer) AddMedicalReport(context.Context, *AddMedicalReportReq) (*AddMedicalReportRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddMedicalReport not implemented")
 }
 func (UnimplementedMedicalRecordServer) GetMedicalReport(context.Context, *GetMedicalReportReq) (*GetMedicalReportRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMedicalReport not implemented")
@@ -139,20 +139,20 @@ func RegisterMedicalRecordServer(s grpc.ServiceRegistrar, srv MedicalRecordServe
 	s.RegisterService(&MedicalRecord_ServiceDesc, srv)
 }
 
-func _MedicalRecord_CreateMedicalReport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateMedicalReportReq)
+func _MedicalRecord_AddMedicalReport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddMedicalReportReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MedicalRecordServer).CreateMedicalReport(ctx, in)
+		return srv.(MedicalRecordServer).AddMedicalReport(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MedicalRecord_CreateMedicalReport_FullMethodName,
+		FullMethod: MedicalRecord_AddMedicalReport_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MedicalRecordServer).CreateMedicalReport(ctx, req.(*CreateMedicalReportReq))
+		return srv.(MedicalRecordServer).AddMedicalReport(ctx, req.(*AddMedicalReportReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -233,12 +233,12 @@ func _MedicalRecord_DeleteMedicalReport_Handler(srv interface{}, ctx context.Con
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var MedicalRecord_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "health.MedicalRecord",
+	ServiceName: "medical.MedicalRecord",
 	HandlerType: (*MedicalRecordServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateMedicalReport",
-			Handler:    _MedicalRecord_CreateMedicalReport_Handler,
+			MethodName: "AddMedicalReport",
+			Handler:    _MedicalRecord_AddMedicalReport_Handler,
 		},
 		{
 			MethodName: "GetMedicalReport",

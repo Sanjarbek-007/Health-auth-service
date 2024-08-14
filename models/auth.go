@@ -7,16 +7,17 @@ type RegisterReq struct {
 	LastName    string `json:"last_name"`
 	DateOfBirth string `json:"date_of_birth"`
 	Gender      string `json:"gender"`
+	Role        string `json:"role"`
 }
 
 type RegisterResp struct {
-	Id             string `json:"id"`
-	Email          string `json:"email"`
+	Id          string `json:"id"`
+	Email       string `json:"email"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
 	DateOfBirth string `json:"date_of_birth"`
 	Gender      string `json:"gender"`
-	CreatedAt      string `json:"created_at"`
+	CreatedAt   string `json:"created_at"`
 }
 
 type LoginReq struct {
@@ -26,7 +27,7 @@ type LoginReq struct {
 
 type Tokens struct {
 	AccessToken  string `json:"access_token"`
-	ExpiresAt    string `json:"expires_at"` // expiry date of access token
+	ExpiresAt    string `json:"expires_at"`
 	RefreshToken string `json:"refresh_token"`
 }
 
@@ -52,7 +53,7 @@ type ResetPasswordReq struct {
 
 type UserDetails struct {
 	Id       string `json:"id"`
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 	Role     string `json:"role"`
 }

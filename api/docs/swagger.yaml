@@ -40,6 +40,8 @@ definitions:
         type: string
       password:
         type: string
+      role:
+        type: string
     type: object
   models.RegisterResp:
     properties:
@@ -72,7 +74,6 @@ definitions:
       access_token:
         type: string
       expires_at:
-        description: expiry date of access token
         type: string
       refresh_token:
         type: string

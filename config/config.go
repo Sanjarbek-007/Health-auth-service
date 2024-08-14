@@ -51,7 +51,7 @@ func Load() *Config {
 			DB_PASSWORD: cast.ToString(coalesce("DB_PASSWORD", "1111")),
 		},
 		Redis: RedisConfig{
-			Address:  cast.ToString(coalesce("REDIS_ADDRESS", "localhost:6379")),
+			Address:  cast.ToString(coalesce("REDIS_ADDRESS", "l-redis:6379")),
 			Password: cast.ToString(coalesce("REDIS_PASSWORD", "")),
 			DB:       cast.ToInt(coalesce("REDIS_DB", "0")),
 		},

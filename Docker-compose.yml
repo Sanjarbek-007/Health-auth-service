@@ -13,25 +13,23 @@ services:
     ports:
       - "5438:5432"
     networks:
-      - auth-ntwk 
-
+      - health
   
   migrate:
     image: migrate/migrate
     networks:
-      - auth-ntwk 
+      - health
     depends_on:
       - postgres-db
     volumes:
       - ./migrations:/migrations
     command: ["-path", "/migrations", "-database", "postgres://macbookpro:1111@postgres-db:5432/auth?sslmode=disable", "up"]
 
-
   redis:
     image: redis:latest
     container_name: l-redis
     networks:
-      - auth-ntwk
+      - health
     ports:
       - "9378:6379"
   
@@ -42,14 +40,14 @@ services:
       - postgres-db
       - redis
     ports:
-      - "8081:8080"
+      - "8081:8081"
     networks:
-      - auth-ntwk
+      - health
 
 volumes:
   postgres-data:
 
 networks:
-  auth-ntwk:
-    name: auth-ntwk 
+  health:
     external: true
+    driver: bridge

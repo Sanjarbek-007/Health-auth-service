@@ -22,16 +22,16 @@ func NewUserRepo(DB *sql.DB) storage.IUserStorage {
 	return &UserRepo{DB: DB, Log: logs.NewLogger()}
 }
 
-func (u *UserRepo) CreateUser(ctx context.Context, req *models.RegisterReq) (*models.RegisterResp, error) {
+func (u *UserRepo) CreateUser(ctx context.Context, req *pb.RegisterReq) (*pb.RegisterRes, error) {
 	tx, err := u.DB.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to begin transaction: %w", err)
 	}
 
 	var userID, createdAtStr string
-	userQuery := `INSERT INTO users (first_name, last_name, email, password_hash, date_of_birth, gender) 
-                  VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, created_at`
-	err = tx.QueryRowContext(ctx, userQuery, req.FirstName, req.LastName, req.Email, req.Password, req.DateOfBirth, req.Gender).Scan(&userID, &createdAtStr)
+	userQuery := `INSERT INTO users (first_name, last_name, email, password_hash, date_of_birth, gender, role) 
+                  VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, created_at`
+	err = tx.QueryRowContext(ctx, userQuery, req.FirstName, req.LastName, req.Email, req.Password, req.DateOfBirth, req.Gender, req.Role).Scan(&userID, &createdAtStr)
 	if err != nil {
 		tx.Rollback()
 		return nil, fmt.Errorf("failed to insert user: %w", err)
@@ -42,19 +42,13 @@ func (u *UserRepo) CreateUser(ctx context.Context, req *models.RegisterReq) (*mo
 		return nil, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
-	createdAt, err := time.Parse(time.RFC3339, createdAtStr)
+	_, err = time.Parse(time.RFC3339, createdAtStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse created_at: %w", err)
 	}
 
-	return &models.RegisterResp{
-		Id:          userID,
-		Email:       req.Email,
-		FirstName:   req.FirstName,
-		LastName:    req.LastName,
-		DateOfBirth: req.DateOfBirth,
-		Gender:      req.Gender,
-		CreatedAt:   createdAt.String(),
+	return &pb.RegisterRes{
+		UserId: userID,
 	}, nil
 }
 
@@ -214,10 +208,10 @@ func (u *UserRepo) GetByUserID(ctx context.Context, userID string) (*pb.User, er
 func (u *UserRepo) DeleteUser(ctx context.Context, userID string) error {
 	now := time.Now().Unix()
 	query := `UPDATE users SET deleted_at = $1 WHERE id = $2 AND deleted_at = 0`
-    _, err := u.DB.ExecContext(ctx, query, now, userID)
-    if err!= nil {
-        return err
-    }
+	_, err := u.DB.ExecContext(ctx, query, now, userID)
+	if err != nil {
+		return err
+	}
 
-    return nil
+	return nil
 }

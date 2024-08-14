@@ -356,6 +356,9 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                },
+                "role": {
+                    "type": "string"
                 }
             }
         },
@@ -406,7 +409,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "expires_at": {
-                    "description": "expiry date of access token",
                     "type": "string"
                 },
                 "refresh_token": {

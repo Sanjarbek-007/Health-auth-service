@@ -27,7 +27,7 @@ import (
 func (h *Handler) Register(c *gin.Context) {
 	h.Log.Info("Register handler is invoked")
 
-	var req models.RegisterReq
+	var req pb.RegisterReq
 	if err := c.ShouldBind(&req); err != nil {
 		handlerError(c, h, err, "invalid data", http.StatusBadRequest)
 		return

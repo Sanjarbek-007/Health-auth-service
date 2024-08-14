@@ -1,3 +1,4 @@
 DROP TABLE IF EXISTS users;
 DROP TYPE IF EXISTS roles;
 DROP TYPE IF EXISTS genders;
+DROP TABLE IF EXISTS notifications;

@@ -14,3 +14,10 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     deleted_at Bigint DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS notifications(
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id),
+    messages TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE
+);

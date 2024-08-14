@@ -26,7 +26,7 @@ func StoreCode(ctx context.Context, email, code string) error {
 	fmt.Println("Storing code for email: " + email + " with code: " + code)
 	rdb := ConnectDB()
 
-	err := rdb.Set(ctx, "lingualeap:"+email, code, time.Minute*3).Err()
+	err := rdb.Set(ctx, "health:"+email, code, time.Minute*3).Err()
 	if err != nil {
 		return errors.Wrap(err, "failed to store code in redis")
 
@@ -38,7 +38,7 @@ func StoreCode(ctx context.Context, email, code string) error {
 func GetCode(ctx context.Context, email string) (string, error) {
 	rdb := ConnectDB()
 
-	code, err := rdb.Get(ctx, "lingualeap:"+email).Result()
+	code, err := rdb.Get(ctx, "health:"+email).Result()
 	if err != nil {
 		if err == redis.Nil {
 			return "", errors.New("code not found for " + email)
@@ -52,7 +52,7 @@ func GetCode(ctx context.Context, email string) (string, error) {
 func DeleteCode(ctx context.Context, email string) error {
 	rdb := ConnectDB()
 
-	err := rdb.Del(ctx, "lingualeap:"+email).Err()
+	err := rdb.Del(ctx, "health:"+email).Err()
 	if err != nil {
 		return errors.Wrap(err, "failed to delete code from redis")
 	}

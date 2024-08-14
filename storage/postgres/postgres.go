@@ -16,8 +16,8 @@ type postgresStorage struct {
 
 func ConnectDB() (storage.IStorage, error) {
 	conf := config.Load()
-	conDb := fmt.Sprintf("host=localhost port=%s user=%s dbname=%s password=%s sslmode=disable",
-		conf.Postgres.DB_PORT, conf.Postgres.DB_USER, conf.Postgres.DB_NAME, conf.Postgres.DB_PASSWORD)
+	conDb := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
+		conf.Postgres.DB_HOST, conf.Postgres.DB_PORT, conf.Postgres.DB_USER, conf.Postgres.DB_NAME, conf.Postgres.DB_PASSWORD)
 	log.Printf("connecting to postgres: %s\n", conDb)
 	db, err := sql.Open("postgres", conDb)
 	if err != nil {
@@ -39,4 +39,8 @@ func (p *postgresStorage) Close() {
 
 func (p *postgresStorage) User() storage.IUserStorage {
 	return NewUserRepo(p.db)
+}
+
+func (p *postgresStorage) Notifications() storage.INotificationStorage {
+	return NewNotificationsRepository(p.db)
 }
