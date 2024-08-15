@@ -8,7 +8,6 @@ import (
 
 type IStorage interface {
 	User() IUserStorage
-	Notifications() INotificationStorage
 	Close()
 }
 
@@ -22,10 +21,8 @@ type IUserStorage interface {
 	ChangePassword(ctx context.Context, userID, hashedPassword string) error
 	GetByUserID(ctx context.Context, userID string) (*pb.User, error)
 	DeleteUser(ctx context.Context, userID string) error
-}
 
-type INotificationStorage interface {
-	CreateNotifications(context.Context, *pb.CreateNotificationsReq) (*pb.CreateNotificationsRes, error)
-	GetAllNotifications(context.Context, *pb.GetNotificationsReq) (*pb.GetNotificationsResponse, error)
-	GetAndMarkNotificationAsRead(context.Context, *pb.GetAndMarkNotificationAsReadReq) (*pb.GetAndMarkNotificationAsReadRes, error)
+	CreateNotifications(ctx context.Context, req *pb.CreateNotificationsReq) (*pb.CreateNotificationsRes, error)
+	GetAllNotifications(ctx context.Context, req *pb.GetNotificationsReq) (*pb.GetNotificationsResponse, error)
+	GetAndMarkNotificationAsRead(ctx context.Context, req *pb.GetAndMarkNotificationAsReadReq) (*pb.GetAndMarkNotificationAsReadRes, error)
 }

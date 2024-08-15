@@ -43,6 +43,11 @@ func (h *Handler) Register(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c, time.Second*5)
 	defer cancel()
 
+	if req.Email == "" || req.Password == "" {
+		handlerError(c, h, errors.New("missing email or password"), "invalid data", http.StatusBadRequest)
+        return
+	}
+
 	resp, err := h.Storage.User().CreateUser(ctx, &req)
 	if err != nil {
 		handlerError(c, h, err, "failed to register user", http.StatusInternalServerError)
