@@ -13,7 +13,6 @@ import (
 // @title Authorazation
 // @version 1.0
 // @description Authorazation API
-// @host localhost:8081
 // @BasePath /auth
 func NewRouter(s storage.IStorage) *gin.Engine {
 	h := handler.NewHandler(s)
