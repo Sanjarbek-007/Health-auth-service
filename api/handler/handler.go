@@ -3,6 +3,7 @@ package handler
 import (
 	"auth-service/logs"
 	"auth-service/storage"
+	"log"
 	"log/slog"
 
 	"github.com/gin-gonic/gin"
@@ -29,6 +30,7 @@ func handlerError(c *gin.Context, h *Handler, err error, msg string, code int) {
 
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log.Println("Cors middleware triggered")
 		c.Writer.Header().Set("Content-Type", "application/json")
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Max-Age", "86400")

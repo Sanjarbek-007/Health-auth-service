@@ -78,7 +78,6 @@ definitions:
       refresh_token:
         type: string
     type: object
-host: localhost:8081
 info:
   contact: {}
   description: Authorazation API

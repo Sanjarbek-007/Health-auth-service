@@ -6,7 +6,6 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8081",
     "basePath": "/auth",
     "paths": {
         "/change-password": {
